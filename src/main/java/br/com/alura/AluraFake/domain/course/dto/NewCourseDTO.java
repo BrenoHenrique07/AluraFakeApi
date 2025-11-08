@@ -1,4 +1,4 @@
-package br.com.alura.AluraFake.course;
+package br.com.alura.AluraFake.domain.course.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

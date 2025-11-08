@@ -1,6 +1,10 @@
-package br.com.alura.AluraFake.user;
+package br.com.alura.AluraFake.domain.user.controller;
 
-import br.com.alura.AluraFake.util.ErrorItemDTO;
+import br.com.alura.AluraFake.domain.user.repository.UserRepository;
+import br.com.alura.AluraFake.domain.user.dto.NewUserDTO;
+import br.com.alura.AluraFake.domain.user.dto.UserListItemDTO;
+import br.com.alura.AluraFake.domain.user.model.User;
+import br.com.alura.AluraFake.core.exception.ErrorItemDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.*;
 import org.springframework.transaction.annotation.Transactional;

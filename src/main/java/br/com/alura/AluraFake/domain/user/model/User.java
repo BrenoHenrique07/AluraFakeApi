@@ -1,6 +1,6 @@
-package br.com.alura.AluraFake.user;
+package br.com.alura.AluraFake.domain.user.model;
 
-import br.com.alura.AluraFake.util.PasswordGeneration;
+import br.com.alura.AluraFake.core.util.PasswordGeneration;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;

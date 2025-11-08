@@ -1,5 +1,7 @@
-package br.com.alura.AluraFake.user;
+package br.com.alura.AluraFake.domain.user.dto;
 
+import br.com.alura.AluraFake.domain.user.model.Role;
+import br.com.alura.AluraFake.domain.user.model.User;
 import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.Length;
 
