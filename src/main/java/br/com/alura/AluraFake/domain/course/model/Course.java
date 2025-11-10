@@ -15,7 +15,7 @@ public class Course {
     private LocalDateTime createdAt = LocalDateTime.now();
     private String title;
     private String description;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private User instructor;
     @Enumerated(EnumType.STRING)
     private Status status;
