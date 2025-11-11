@@ -6,15 +6,16 @@ import br.com.alura.AluraFake.core.exception.type.ResourceNotFoundException;
 import br.com.alura.AluraFake.domain.course.model.Course;
 import br.com.alura.AluraFake.domain.course.model.Status;
 import br.com.alura.AluraFake.domain.course.repository.CourseRepository;
+import br.com.alura.AluraFake.domain.task.dto.multiplechoice.MultipleChoiceOptionRequest;
+import br.com.alura.AluraFake.domain.task.dto.multiplechoice.MultipleChoiceTaskRequest;
+import br.com.alura.AluraFake.domain.task.dto.multiplechoice.MultipleChoiceTaskResponse;
 import br.com.alura.AluraFake.domain.task.dto.opentext.OpenTextTaskRequest;
 import br.com.alura.AluraFake.domain.task.dto.opentext.OpenTextTaskResponse;
 import br.com.alura.AluraFake.domain.task.dto.singlechoice.SingleChoiceOptionRequest;
 import br.com.alura.AluraFake.domain.task.dto.singlechoice.SingleChoiceTaskRequest;
 import br.com.alura.AluraFake.domain.task.dto.singlechoice.SingleChoiceTaskResponse;
-import br.com.alura.AluraFake.domain.task.model.OpenTextTask;
-import br.com.alura.AluraFake.domain.task.model.SingleChoiceOption;
-import br.com.alura.AluraFake.domain.task.model.SingleChoiceTask;
-import br.com.alura.AluraFake.domain.task.model.Task;
+import br.com.alura.AluraFake.domain.task.model.*;
+import br.com.alura.AluraFake.domain.task.repository.MultipleChoiceOptionRepository;
 import br.com.alura.AluraFake.domain.task.repository.SingleChoiceOptionRepository;
 import br.com.alura.AluraFake.domain.task.repository.TaskRepository;
 import jakarta.transaction.Transactional;
@@ -30,11 +31,16 @@ public class TaskService {
 
     private final TaskRepository taskRepository;
     private final SingleChoiceOptionRepository singleChoiceOptionRepository;
+    private final MultipleChoiceOptionRepository multipleChoiceOptionRepository;
     private final CourseRepository courseRepository;
 
-    public TaskService(TaskRepository taskRepository, SingleChoiceOptionRepository singleChoiceOptionRepository, CourseRepository courseRepository) {
+    public TaskService(TaskRepository taskRepository,
+                       SingleChoiceOptionRepository singleChoiceOptionRepository,
+                       MultipleChoiceOptionRepository multipleChoiceOptionRepository,
+                       CourseRepository courseRepository) {
         this.taskRepository = taskRepository;
         this.singleChoiceOptionRepository = singleChoiceOptionRepository;
+        this.multipleChoiceOptionRepository = multipleChoiceOptionRepository;
         this.courseRepository = courseRepository;
     }
 
@@ -57,10 +63,25 @@ public class TaskService {
         SingleChoiceTask singleChoiceTask = new SingleChoiceTask(request.statement(), request.order(), course);
         SingleChoiceTask taskSaved = this.taskRepository.save(singleChoiceTask);
 
-        List<SingleChoiceOption> options = mapOptions(request.options(), taskSaved);
+        List<SingleChoiceOption> options = mapSingleChoiceOptions(request.options(), taskSaved);
         List<SingleChoiceOption> optionsSaved = this.singleChoiceOptionRepository.saveAll(options);
 
         return SingleChoiceTaskResponse.from(taskSaved, optionsSaved);
+    }
+
+    @Transactional
+    public MultipleChoiceTaskResponse createMultipleChoiceTask(MultipleChoiceTaskRequest request) {
+        Course course = findCourseOrThrow(request.courseId());
+        validateMultipleChoiceTask(request);
+        validateGeneralRules(request.statement(), request.order(), course);
+
+        MultipleChoiceTask multipleChoiceTask = new MultipleChoiceTask(request.statement(), request.order(), course);
+        MultipleChoiceTask taskSaved = this.taskRepository.save(multipleChoiceTask);
+
+        List<MultipleChoiceOption> options = mapMultipleChoiceOptions(request.options(), taskSaved);
+        List<MultipleChoiceOption> optionsSaved = this.multipleChoiceOptionRepository.saveAll(options);
+
+        return MultipleChoiceTaskResponse.from(taskSaved, optionsSaved);
     }
 
     private void validateGeneralRules(String statement, int order, Course course) {
@@ -88,7 +109,7 @@ public class TaskService {
 
     private void validateSingleChoiceTask(SingleChoiceTaskRequest request) {
         Set<String> uniqueOptions = new HashSet<>();
-        long correctOptionsCount = 0;
+        int correctOptionsCount = 0;
 
         for (SingleChoiceOptionRequest option : request.options()) {
             String optionText = option.option().strip();
@@ -107,10 +128,46 @@ public class TaskService {
         }
     }
 
-    private List<SingleChoiceOption> mapOptions(List<SingleChoiceOptionRequest> optionsRequest, SingleChoiceTask task) {
+    private void validateMultipleChoiceTask(MultipleChoiceTaskRequest request) {
+        Set<String> uniqueOptions = new HashSet<>();
+        int correctOptionsCount = 0;
+        int incorrectOptionsCount = 0;
+
+        for (MultipleChoiceOptionRequest option : request.options()) {
+            String optionText = option.option().strip();
+            if (optionText.equalsIgnoreCase(request.statement())) {
+                throw new BusinessRulesException("The option cannot be the same as the statement.");
+            }
+            if (!uniqueOptions.add(optionText.toLowerCase())) {
+                throw new BusinessRulesException("The options cannot be identical to each other.");
+            }
+            if (option.isCorrect()) {
+                correctOptionsCount++;
+            } else {
+                incorrectOptionsCount++;
+            }
+        }
+        if (correctOptionsCount < 2) {
+            throw new BusinessRulesException("The task must have at least two correct answers.");
+        }
+        if(incorrectOptionsCount < 1) {
+            throw new BusinessRulesException("The task must have at least one incorrect answer.");
+        }
+    }
+
+    private List<SingleChoiceOption> mapSingleChoiceOptions(List<SingleChoiceOptionRequest> optionsRequest, SingleChoiceTask task) {
         List<SingleChoiceOption> options = new ArrayList<>();
         for (SingleChoiceOptionRequest optionRequest : optionsRequest) {
             SingleChoiceOption option = new SingleChoiceOption(optionRequest.option(), optionRequest.isCorrect(), task);
+            options.add(option);
+        }
+        return options;
+    }
+
+    private List<MultipleChoiceOption> mapMultipleChoiceOptions(List<MultipleChoiceOptionRequest> optionsRequest, MultipleChoiceTask task) {
+        List<MultipleChoiceOption> options = new ArrayList<>();
+        for (MultipleChoiceOptionRequest optionRequest : optionsRequest) {
+            MultipleChoiceOption option = new MultipleChoiceOption(optionRequest.option(), optionRequest.isCorrect(), task);
             options.add(option);
         }
         return options;

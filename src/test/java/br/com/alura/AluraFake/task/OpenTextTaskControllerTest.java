@@ -6,6 +6,8 @@ import br.com.alura.AluraFake.domain.course.model.Status;
 import br.com.alura.AluraFake.domain.course.repository.CourseRepository;
 import br.com.alura.AluraFake.domain.task.controller.TaskController;
 import br.com.alura.AluraFake.domain.task.dto.opentext.OpenTextTaskRequest;
+import br.com.alura.AluraFake.domain.task.repository.MultipleChoiceOptionRepository;
+import br.com.alura.AluraFake.domain.task.repository.SingleChoiceOptionRepository;
 import br.com.alura.AluraFake.domain.task.repository.TaskRepository;
 import br.com.alura.AluraFake.domain.task.service.TaskService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(TaskController.class)
 @Import({TaskService.class, GlobalExceptionHandler.class})
-class TaskControllerTest {
+class OpenTextTaskControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -35,6 +37,12 @@ class TaskControllerTest {
 
     @MockBean
     private TaskRepository taskRepository;
+
+    @MockBean
+    private SingleChoiceOptionRepository singleChoiceOptionRepository;
+
+    @MockBean
+    private MultipleChoiceOptionRepository multipleChoiceOptionRepository;
 
     @Autowired
     private ObjectMapper objectMapper;
