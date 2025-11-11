@@ -1,7 +1,9 @@
 package br.com.alura.AluraFake.domain.task.controller;
 
-import br.com.alura.AluraFake.domain.task.dto.OpenTextTaskRequest;
-import br.com.alura.AluraFake.domain.task.dto.OpenTextTaskResponse;
+import br.com.alura.AluraFake.domain.task.dto.opentext.OpenTextTaskRequest;
+import br.com.alura.AluraFake.domain.task.dto.opentext.OpenTextTaskResponse;
+import br.com.alura.AluraFake.domain.task.dto.singlechoice.SingleChoiceTaskRequest;
+import br.com.alura.AluraFake.domain.task.dto.singlechoice.SingleChoiceTaskResponse;
 import br.com.alura.AluraFake.domain.task.service.TaskService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +25,9 @@ public class TaskController {
     }
 
     @PostMapping("/task/new/singlechoice")
-    public ResponseEntity newSingleChoice() {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<SingleChoiceTaskResponse> newSingleChoice(@RequestBody @Valid SingleChoiceTaskRequest singleChoiceTaskRequest) {
+        SingleChoiceTaskResponse singleChoiceTaskResponse = this.taskService.createSingleChoiceTask(singleChoiceTaskRequest);
+        return ResponseEntity.ok().body(singleChoiceTaskResponse);
     }
 
     @PostMapping("/task/new/multiplechoice")

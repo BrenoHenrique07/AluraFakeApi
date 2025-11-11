@@ -1,11 +1,14 @@
-package br.com.alura.AluraFake.domain.task.dto;
+package br.com.alura.AluraFake.domain.task.dto.singlechoice;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public record OpenTextTaskRequest(
+import java.util.List;
+
+public record SingleChoiceTaskRequest(
         @NotNull(message = "courseId is required")
         Long courseId,
 
@@ -15,11 +18,15 @@ public record OpenTextTaskRequest(
 
         @NotNull(message = "order is required")
         @Min(value = 1, message = "order must be a positive integer")
-        Integer order
+        Integer order,
+
+        @Valid
+        @Size(min = 2, max = 5, message = "options must be between 2 and 5 items")
+        List<SingleChoiceOptionRequest> options
 ) {
-        public OpenTextTaskRequest {
-                if (statement != null) {
-                        statement = statement.strip();
-                }
+    public SingleChoiceTaskRequest {
+        if (statement != null) {
+            statement = statement.strip();
         }
+    }
 }

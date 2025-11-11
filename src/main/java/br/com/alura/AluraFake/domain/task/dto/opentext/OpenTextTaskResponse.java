@@ -1,4 +1,4 @@
-package br.com.alura.AluraFake.domain.task.dto;
+package br.com.alura.AluraFake.domain.task.dto.opentext;
 
 import br.com.alura.AluraFake.domain.task.model.OpenTextTask;
 
