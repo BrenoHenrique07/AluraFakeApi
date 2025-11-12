@@ -2,13 +2,12 @@ package br.com.alura.AluraFake.domain.task.model;
 
 import br.com.alura.AluraFake.domain.course.model.Course;
 import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "Task")
+@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Task {
 
     @Id
@@ -28,12 +27,17 @@ public abstract class Task {
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = false, updatable = false)
+    private Type type;
+
     public Task() {}
 
-    public Task(String statement, Integer order, Course course) {
+    public Task(String statement, Integer order, Course course, Type type) {
         this.statement = statement;
         this.order = order;
         this.course = course;
+        this.type = type;
     }
 
     public Long getId() {
@@ -66,6 +70,10 @@ public abstract class Task {
     }
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Type getType() {
+        return type;
     }
 }
 

@@ -12,7 +12,7 @@ public class SingleChoiceTask extends Task {
     }
 
     public SingleChoiceTask(String statement, Integer order, Course course){
-        super(statement, order, course);
+        super(statement, order, course, Type.SINGLE_CHOICE);
     }
 
 }

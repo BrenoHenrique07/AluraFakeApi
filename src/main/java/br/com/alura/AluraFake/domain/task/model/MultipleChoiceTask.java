@@ -12,7 +12,7 @@ public class MultipleChoiceTask extends Task {
     }
 
     public MultipleChoiceTask(String statement, Integer order, Course course){
-        super(statement, order, course);
+        super(statement, order, course, Type.MULTIPLE_CHOICE);
     }
 
 }

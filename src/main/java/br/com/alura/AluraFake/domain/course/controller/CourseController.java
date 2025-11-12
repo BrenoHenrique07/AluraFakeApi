@@ -1,9 +1,11 @@
 package br.com.alura.AluraFake.domain.course.controller;
 
+import br.com.alura.AluraFake.domain.course.dto.PublishedCourseResponse;
 import br.com.alura.AluraFake.domain.course.model.Course;
 import br.com.alura.AluraFake.domain.course.dto.CourseListItemDTO;
 import br.com.alura.AluraFake.domain.course.repository.CourseRepository;
 import br.com.alura.AluraFake.domain.course.dto.NewCourseDTO;
+import br.com.alura.AluraFake.domain.course.service.CourseService;
 import br.com.alura.AluraFake.domain.user.model.User;
 import br.com.alura.AluraFake.domain.user.repository.UserRepository;
 import br.com.alura.AluraFake.core.exception.dto.ErrorItemDTO;
@@ -18,11 +20,13 @@ import java.util.*;
 @RestController
 public class CourseController {
 
+    private final CourseService courseService;
     private final CourseRepository courseRepository;
     private final UserRepository userRepository;
 
     @Autowired
-    public CourseController(CourseRepository courseRepository, UserRepository userRepository){
+    public CourseController(CourseService courseService, CourseRepository courseRepository, UserRepository userRepository){
+        this.courseService = courseService;
         this.courseRepository = courseRepository;
         this.userRepository = userRepository;
     }
@@ -56,8 +60,9 @@ public class CourseController {
     }
 
     @PostMapping("/course/{id}/publish")
-    public ResponseEntity createCourse(@PathVariable("id") Long id) {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<PublishedCourseResponse> createCourse(@PathVariable("id") Long id) {
+        PublishedCourseResponse publishedCourseResponse = this.courseService.publish(id);
+        return ResponseEntity.ok().body(publishedCourseResponse);
     }
 
 }

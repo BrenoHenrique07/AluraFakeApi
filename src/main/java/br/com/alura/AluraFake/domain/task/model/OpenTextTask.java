@@ -12,7 +12,7 @@ public class OpenTextTask extends Task {
     }
 
     public OpenTextTask(String statement, Integer order, Course course){
-        super(statement, order, course);
+        super(statement, order, course, Type.OPEN_TEXT);
     }
 
 }
