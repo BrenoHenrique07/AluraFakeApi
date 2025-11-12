@@ -9,6 +9,7 @@ import br.com.alura.AluraFake.domain.course.repository.CourseRepository;
 import br.com.alura.AluraFake.domain.task.model.Task;
 import br.com.alura.AluraFake.domain.task.model.Type;
 import br.com.alura.AluraFake.domain.task.repository.TaskRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -27,6 +28,7 @@ public class CourseService {
         this.taskRepository = taskRepository;
     }
 
+    @Transactional
     public PublishedCourseResponse publish(Long courseId) {
         Course course = this.courseRepository.findById(courseId)
                 .orElseThrow(() -> new ResourceNotFoundException("Course not found with id " + courseId));
