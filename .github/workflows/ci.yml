@@ -18,5 +18,13 @@ jobs:
           distribution: temurin
           java-version: '21'
 
-      - name: Build e Testes
+      - name: Run tests
         run: ./mvnw test
+        env:
+          SPRING_DATASOURCE_URL: jdbc:h2:mem:alurafake_test;DB_CLOSE_DELAY=-1
+          SPRING_DATASOURCE_USERNAME: sa
+          SPRING_DATASOURCE_PASSWORD: ""
+          SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.h2.Driver
+          SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
+          SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.H2Dialect
+          SPRING_FLYWAY_ENABLED: false
